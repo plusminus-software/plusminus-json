@@ -40,14 +40,33 @@ public class BeanIdResolver extends TypeIdResolverBase {
         if (superType.getRawClass().getSimpleName().equals(id)) {
             return superType;
         }
-        List<Class<?>> foundClasses = ClassUtils.findAllClassesBySimpleName(id).stream()
+        Class<?> subclass = findClass(id);
+        subclass = reloadWithClassLoaderIfNeeded(superType.getRawClass().getClassLoader(), subclass);
+        return context.constructSpecializedType(superType, subclass);
+    }
+    
+    private Class<?> findClass(String simpleClassName) {
+        List<Class<?>> foundClasses = ClassUtils.findAllClassesBySimpleName(simpleClassName).stream()
                 .filter(c -> AnnotationUtils.findAnnotation(c, JsonTypeIdResolver.class) != null)
                 .collect(Collectors.toList());
         if (foundClasses.isEmpty()) {
-            throw new IllegalArgumentException("Unknown class " + id);
+            throw new IllegalArgumentException("Unknown class " + simpleClassName);
         } else if (foundClasses.size() > 1) {
-            throw new IllegalArgumentException("Multiple classes found with name '" + id + "': " + foundClasses);
+            throw new IllegalArgumentException("Multiple classes found with name '" + simpleClassName
+                    + "': " + foundClasses);
         }
-        return context.constructSpecializedType(superType, foundClasses.get(0));
+        return foundClasses.get(0);
+    }
+    
+    private Class<?> reloadWithClassLoaderIfNeeded(ClassLoader classLoader, Class<?> c) {
+        if (c.getClassLoader() == classLoader) {
+            return c;
+        }
+        try {
+            return classLoader.loadClass(c.getName());
+        } catch (ClassNotFoundException e) {
+            throw new IllegalArgumentException("Can't reload " + c.getSimpleName()
+                    + " class with classloader " + classLoader.getClass().getSimpleName());
+        }
     }
 }

@@ -63,10 +63,12 @@
         </dependency>
         <!-- Test -->
         <dependency>
-            <groupId>software.plusminus</groupId>
-            <artifactId>plusminus-test</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>test</scope>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
         </dependency>
     </dependencies>
 </project>
