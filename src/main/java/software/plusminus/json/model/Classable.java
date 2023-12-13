@@ -15,6 +15,11 @@ public interface Classable {
 
     @JsonProperty("class")
     default String getClazz() {
-        return getClass().getSimpleName();
+        String name = getClass().getName();
+        int lastDotIndex = name.lastIndexOf('.');
+        if (lastDotIndex == -1) {
+            return name;
+        }
+        return name.substring(lastDotIndex + 1);
     }
 }

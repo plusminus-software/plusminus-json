@@ -16,25 +16,25 @@ public class BeanIdResolverTest {
     public void marshalling() throws IOException {
         BeanIdEntity testEntity = new BeanIdEntity();
         String json = mapper.writeValueAsString(testEntity);
-        assertThat(json).isEqualTo(getJson(BeanIdEntity.class));
+        assertThat(json).isEqualTo(getJson("BeanIdResolverTest$BeanIdEntity"));
     }
     
     @Test
     public void unmarshalling() throws IOException {
-        String json = getJson(BeanIdEntity.class);
+        String json = getJson("BeanIdResolverTest$BeanIdEntity");
         BeanIdBaseEntity entity = mapper.readValue(json, BeanIdBaseEntity.class);
         assertThat(entity.getClass()).isEqualTo(BeanIdEntity.class);
     }
 
     @Test
     public void unmarshallingOfSuperClass() throws IOException {
-        String json = "{\"class\":\"BeanIdBaseEntity\"}";
+        String json = "{\"class\":\"BeanIdResolverTest$BeanIdBaseEntity\"}";
         BeanIdBaseEntity entity = mapper.readValue(json, BeanIdBaseEntity.class);
         assertThat(entity.getClass()).isEqualTo(BeanIdBaseEntity.class);
     }
     
-    private String getJson(Class type) {
-        return "{\"class\":\"" + type.getSimpleName() + "\",\"field\":\"value\"}";
+    private String getJson(String className) {
+        return "{\"class\":\"" + className + "\",\"field\":\"value\"}";
     }
 
     static class BeanIdBaseEntity implements Classable {
