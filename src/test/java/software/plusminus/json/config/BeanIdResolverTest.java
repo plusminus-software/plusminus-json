@@ -16,19 +16,19 @@ public class BeanIdResolverTest {
     public void marshalling() throws IOException {
         BeanIdEntity testEntity = new BeanIdEntity();
         String json = mapper.writeValueAsString(testEntity);
-        assertThat(json).isEqualTo(getJson("BeanIdResolverTest$BeanIdEntity"));
+        assertThat(json).isEqualTo(getJson("BeanIdEntity"));
     }
     
     @Test
     public void unmarshalling() throws IOException {
-        String json = getJson("BeanIdResolverTest$BeanIdEntity");
+        String json = getJson("BeanIdEntity");
         BeanIdBaseEntity entity = mapper.readValue(json, BeanIdBaseEntity.class);
         assertThat(entity.getClass()).isEqualTo(BeanIdEntity.class);
     }
 
     @Test
     public void unmarshallingOfSuperClass() throws IOException {
-        String json = "{\"class\":\"BeanIdResolverTest$BeanIdBaseEntity\"}";
+        String json = "{\"class\":\"BeanIdBaseEntity\"}";
         BeanIdBaseEntity entity = mapper.readValue(json, BeanIdBaseEntity.class);
         assertThat(entity.getClass()).isEqualTo(BeanIdBaseEntity.class);
     }
