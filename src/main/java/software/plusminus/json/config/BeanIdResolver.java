@@ -3,13 +3,8 @@ package software.plusminus.json.config;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.DatabindContext;
 import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;
-import org.springframework.core.annotation.AnnotationUtils;
-import software.plusminus.util.ClassUtils;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import software.plusminus.metadata.MetadataContext;
 
 public class BeanIdResolver extends TypeIdResolverBase {
 
@@ -40,22 +35,9 @@ public class BeanIdResolver extends TypeIdResolverBase {
         if (superType.getRawClass().getSimpleName().equals(id)) {
             return superType;
         }
-        Class<?> subclass = findClass(id);
+        Class<?> subclass = MetadataContext.getClass(id);
         subclass = reloadWithClassLoaderIfNeeded(superType.getRawClass().getClassLoader(), subclass);
         return context.constructSpecializedType(superType, subclass);
-    }
-    
-    private Class<?> findClass(String simpleClassName) {
-        List<Class<?>> foundClasses = ClassUtils.findAllClassesBySimpleName(simpleClassName).stream()
-                .filter(c -> AnnotationUtils.findAnnotation(c, JsonTypeIdResolver.class) != null)
-                .collect(Collectors.toList());
-        if (foundClasses.isEmpty()) {
-            throw new IllegalArgumentException("Unknown class " + simpleClassName);
-        } else if (foundClasses.size() > 1) {
-            throw new IllegalArgumentException("Multiple classes found with name '" + simpleClassName
-                    + "': " + foundClasses);
-        }
-        return foundClasses.get(0);
     }
     
     private Class<?> reloadWithClassLoaderIfNeeded(ClassLoader classLoader, Class<?> c) {

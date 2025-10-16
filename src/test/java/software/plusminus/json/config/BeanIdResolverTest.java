@@ -3,12 +3,18 @@ package software.plusminus.json.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Test;
 import software.plusminus.json.model.Classable;
+import software.plusminus.metadata.MetadataContext;
 
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class BeanIdResolverTest {
+
+    static {
+        MetadataContext.addClass(BeanIdBaseEntity.class);
+        MetadataContext.addClass(BeanIdEntity.class);
+    }
 
     private ObjectMapper mapper = new ObjectMapper();
     
